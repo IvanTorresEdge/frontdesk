@@ -2,50 +2,81 @@ var assert = chai.assert;
 
 describe('Talknice', function() {
 
-  describe('#parse', function() {
+  describe('#parse', function () {
 
-    it('returns an empty object when no params', function() {
-      var parse = Talknice.parser();
-      assert.deepEqual(parse(), {});
+    describe('filtering of properties', function () {
+      it('1st form', function () {
+        var parser = Talknice.parser({ properties: ['id'] }),
+            data   = { id: 1, other: 'other' };
+        assert.deepEqual(parser.parse(data), { id: 1 });
+      });
+
+      it('2nd form', function () {
+        var parser = Talknice.parser({ properties: [{ 'id': { /* other settings */ } }] }),
+            data   = { id: 1, other: 'other' };
+        assert.deepEqual(parser.parse(data), { id: 1 });
+      });
+
+      it('3rd form', function () {
+        var parser = Talknice.parser({ properties: [{ name: 'id' }] }),
+            data   = { id: 1, other: 'other' };
+        assert.deepEqual(parser.parse(data), { id: 1 });
+      });
     });
 
-    it('does nothing without config', function() {
-      var parse = Talknice.parser();
-      var data  = { id: 1 };
-      assert.equal(parse(data), data);
+    describe('aliasing of properties', function () {
+      it('1st form', function () {
+        var parser = Talknice.parser({ properties: [{ 'id': 'number' }] }),
+            data   = { id: 1 };
+        assert.deepEqual(parser.parse(data), { number: 1 });
+      });
+
+      it('2nd form', function () {
+        var parser = Talknice.parser({ properties: [{ 'id': { alias: 'number' } }] }),
+            data   = { id: 1 };
+        assert.deepEqual(parser.parse(data), { number: 1 });
+      });
+
+      it('3rd form', function () {
+        var parser = Talknice.parser({ properties: [{ name: 'id',  alias: 'number' }] }),
+            data   = { id: 1 };
+        assert.deepEqual(parser.parse(data), { number: 1 });
+      });
     });
 
-    it('filters attributes', function() {
-      var parse = Talknice.parser({ attrs: ['id'] });
-      var data  = { id: 1, name: 'foo' };
-      assert.deepEqual(parse(data), { id: 1 });
+    describe('nested properties', function () {
+      it('re-creates nested properties', function () {
+          var parser = Talknice.parser({ properties: ['foo.bar'] }),
+              data   = { foo: { bar: 'baz' } };
+          assert.deepEqual(parser.parse(data), { foo: { bar: 'baz' } });
+      });
+
+      describe('with aliases', function () {
+        it('transforms property path', function () {
+            var parser = Talknice.parser({ properties: [{ 'foo.bar': 'bar.foo' }] }),
+                data   = { foo: { bar: 'baz' } };
+            assert.deepEqual(parser.parse(data), { bar: { foo: 'baz' } });
+        });
+
+        it('flattens property path', function () {
+            var parser = Talknice.parser({ properties: [{ 'foo.bar': 'foo_bar' }] }),
+                data   = { foo: { bar: 'baz' } };
+            assert.deepEqual(parser.parse(data), { foo_bar: 'baz' });
+        });
+
+        it('expands property', function () {
+            var parser = Talknice.parser({ properties: [{ 'fooBar': 'foo.bar' }] }),
+                data   = { fooBar: 'baz' };
+            assert.deepEqual(parser.parse(data), { foo: { bar: 'baz' }});
+        });
+      });
     });
 
-    it('alias attributes', function() {
-      var parse = Talknice.parser({ attrs: [{'id': 'number'}] });
-      var data  = { id: 1 };
-      assert.deepEqual(parse(data), { number: 1 });
+    it('process arrays', function () {
+      var parser = Talknice.parser({ properties: ['id'] }),
+          data   = [{ id: 1, name: 'Name 1' }, { id: 2, name: 'Name 2' }];
+      assert.deepEqual(parser.parse(data), [{ id: 1 }, { id: 2 }]);
     });
 
-    it('walks/builds nested attrs', function () {
-      var parse = Talknice.parser({ attrs: ['user.current.name'] });
-      var data  = { user: { current: { id: 1, name: 'talknice' }}};
-      assert.deepEqual(parse(data), { user: { current: { name: 'talknice' }}});
-    });
-
-    it('flattens nested attrs', function () {
-      var parse = Talknice.parser({ attrs: [{'user.current.name': 'user_name'}] });
-      var data  = { user: { current: { id: 1, name: 'talknice' }}};
-      assert.deepEqual(parse(data), { user_name: 'talknice' });
-    });
-
-    it('builds nested attrs', function () {
-      var parse = Talknice.parser({ attrs: [{'user_name': 'user.name'}] });
-      var data  = { user_name: 'talknice' };
-      assert.deepEqual(parse(data), { user: { name: 'talknice' }});
-    });
-
-    // TODO: Next, arrays and nested arrays
   });
-
 });

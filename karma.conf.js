@@ -39,9 +39,9 @@ module.exports = function(config) {
     //- text-summary (standard output)
     //- cobertura (xml format supported by Jenkins)
     coverageReporter: {
-        // cf. http://gotwarlost.github.com/istanbul/public/apidocs/
-        type: 'text',
-        dir : 'coverage/'
+      // cf. http://gotwarlost.github.com/istanbul/public/apidocs/
+      type: 'text',
+      dir : 'coverage/'
     },
 
     // web server port
