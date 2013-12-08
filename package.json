@@ -1,42 +1,43 @@
 {
-    "name": "talk-nice",
-    "version": "0.0.0",
-    "description": "Makes any API talk to you nice",
-    "main": "dist/talk-nice.js",
-    "keywords": [
-        "api",
-        "rest"
-    ],
-    "scripts": {
-        "test": "mocha ./talk-nice.js"
-    },
-    "repository": {
-        "url": "https://github.com/mexpolk/talk-nice.git",
-        "type": "git"
-    },
-    "author": "Ivan Torres <mexpolk@gmail.com> (http://rethinkcode.com)",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/mexpolk/talk-nice/issues"
-    },
-    "dependencies": {},
-    "devDependencies": {
-        "karma": "~0.10.4",
-        "karma-chrome-launcher": "~0.1.0",
-        "karma-coffee-preprocessor": "~0.1.0",
-        "karma-firefox-launcher": "~0.1.0",
-        "karma-growl-reporter": "~0.1.1",
-        "karma-html2js-preprocessor": "~0.1.0",
-        "karma-mocha": "~0.1.0",
-        "karma-phantomjs-launcher": "~0.1.0",
-        "karma-script-launcher": "~0.1.0",
-        "karma-requirejs": "~0.1.0",
-        "mocha": "~1.14.0",
-        "grunt": "~0.4.1",
-        "grunt-karma": "~0.6.2",
-        "karma-coverage": "~0.1.1",
-        "chai": "~1.8.1",
-        "sinon": "~1.7.3",
-        "karma-junit-reporter": "~0.1.0"
-    }
+  "name": "talk-nice",
+  "version": "0.0.0",
+  "description": "Makes any API talk to you nice",
+  "main": "dist/talk-nice.js",
+  "keywords": [
+    "api",
+    "rest"
+  ],
+  "scripts": {
+    "test": "mocha ./talk-nice.js"
+  },
+  "repository": {
+    "url": "https://github.com/mexpolk/talk-nice.git",
+    "type": "git"
+  },
+  "author": "Ivan Torres <mexpolk@gmail.com> (http://rethinkcode.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mexpolk/talk-nice/issues"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "karma": "~0.10.4",
+    "karma-chrome-launcher": "~0.1.0",
+    "karma-coffee-preprocessor": "~0.1.0",
+    "karma-firefox-launcher": "~0.1.0",
+    "karma-growl-reporter": "~0.1.1",
+    "karma-html2js-preprocessor": "~0.1.0",
+    "karma-mocha": "~0.1.0",
+    "karma-phantomjs-launcher": "~0.1.0",
+    "karma-script-launcher": "~0.1.0",
+    "karma-requirejs": "~0.1.0",
+    "mocha": "~1.14.0",
+    "grunt": "~0.4.1",
+    "grunt-karma": "~0.6.2",
+    "karma-coverage": "~0.1.1",
+    "chai": "~1.8.1",
+    "sinon": "~1.7.3",
+    "karma-junit-reporter": "~0.1.0",
+    "karma-sinon-chai": "~0.1.1"
+  }
 }

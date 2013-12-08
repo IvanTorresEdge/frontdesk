@@ -3,12 +3,10 @@ module.exports = function(config) {
     // base path, that will be used to resolve files and exclude
     basePath: '.',
 
-    frameworks: ['mocha'],
+    frameworks: ['mocha', 'sinon-chai'],
 
     // list of files / patterns to load in the browser
     files: [
-      { pattern: 'node_modules/chai/chai.js', include: true },
-      { pattern: 'node_modules/sinon/lib/sinon.js', include: true },
       'src/*.js',
       'test/*.js'
     ],
@@ -90,6 +88,7 @@ module.exports = function(config) {
       'karma-firefox-launcher',
       'karma-phantomjs-launcher',
       'karma-junit-reporter',
+      'karma-sinon-chai',
       'karma-coverage'
     ]
   });

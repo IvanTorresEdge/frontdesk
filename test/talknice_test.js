@@ -1,5 +1,3 @@
-var assert = chai.assert;
-
 describe('Talknice', function() {
 
   describe('#parse', function () {
@@ -193,5 +191,73 @@ describe('Talknice', function() {
       assert.deepEqual(parser.parse(data), [{ id: 1 }, { id: 2 }]);
     });
 
+    describe('properties options', function () {
+      describe('`value` option', function () {
+        it('does nothing when value is present', function () {
+          var parser = Talknice.parser({ properties: [
+            { myProperty: { value: 'defaultValue' } }
+          ]});
+          assert.deepEqual(parser.parse({myProperty: 'myValue'}), {myProperty: 'myValue'});
+        });
+
+        it('sets default value', function () {
+          var parser = Talknice.parser({ properties: [
+            { myProperty: { value: 'defaultValue' } }
+          ]});
+          assert.deepEqual(parser.parse({}), {myProperty: 'defaultValue'});
+        });
+
+        describe('when default value is a function', function () {
+          beforeEach(function () {
+            this.stub = sinon.stub().returns('defaultValue');
+
+            this.config = { properties: [
+              { myProperty: { value: this.stub  } }
+            ]};
+
+            this.parser = Talknice.parser(this.config);
+          });
+
+          it('calls a function', function () {
+            this.parser.parse({});
+            assert.isTrue(this.stub.called);
+          });
+
+          it('sets the default value', function () {
+            assert.deepEqual(this.parser.parse({}), {myProperty: 'defaultValue'});
+          });
+        });
+      });
+
+      describe('`type` option', function () {
+        it('does nothing when value is present', function () {
+          var parser = Talknice.parser({ properties: [
+            { myProperty: { type: 'boolean' } }
+          ]});
+          assert.deepEqual(parser.parse({myProperty: true}), {myProperty: true});
+        });
+
+        it('sets false if `boolean`', function () {
+          var parser = Talknice.parser({ properties: [
+            { myProperty: { type: 'boolean' } }
+          ]});
+          assert.deepEqual(parser.parse({}), {myProperty: false});
+        });
+
+        it('sets a date object if `date`', function () {
+          var parser = Talknice.parser({ properties: [
+                { myProperty: { type: 'date' } }
+              ]});
+          assert.isTrue(parser.parse({}).myProperty instanceof Date);
+        });
+
+        it('sets a zero if `number`', function () {
+          var parser = Talknice.parser({ properties: [
+            { myProperty: { type: 'number' } }
+          ]});
+          assert.deepEqual(parser.parse({}), {myProperty: 0});
+        });
+      });
+    });
   });
 });

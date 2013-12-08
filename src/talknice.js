@@ -323,29 +323,29 @@
    * @name setValue
    * @param {Object} obj target object.
    * @param {Object} property property to be set.
-   * @param {*} value value for the property to be set.
+   * @param {*} val value for the property to be set.
    * @example
    *
    * // Simple property:
    *
    * var property = { alias: 'email' },
-   *     value = 'name@example.com',
+   *     val = 'name@example.com',
    *     obj = {};
    *
-   * setValue(obj, property, value);
+   * setValue(obj, property, val);
    * // obj => { email: 'name@example.com' }
    *
    * // Nested property:
    *
    * var property = { alias: 'user.email' },
-   *     value = 'name@example.com',
+   *     val = 'name@example.com',
    *     obj = {};
    *
-   * setValue(obj, property, value);
+   * setValue(obj, property, val);
    * // obj => { user: { email: 'name@example.com' } }
    *
    */
-  function setValue(obj, property, value) {
+  function setValue(obj, property, val) {
     var path = property.alias.split('.'),
         len  = path.length - 1,
         ctx  = obj;
@@ -355,7 +355,90 @@
       ctx = ctx[path[i]];
     }
 
-    ctx[path[len]] = value;
+    ctx[path[len]] = setDefault(obj, property, val);
+  }
+
+  /**
+   * In the absense of value set's the default on properties.
+   *
+   * @private
+   * @name setDefault
+   * @param {Object} obj target object.
+   * @param {Object} property property to be set.
+   * @param {*} val value for the property to be set.
+   * @return {*} if present the value of the property or default value.
+   * @example
+   *
+   * // using `value` option with any value:
+   * var parser = new Talkine.parser({ properties: {
+   *   count: { value: 1 }
+   * }});
+   * parser.parse({});
+   * // => { count: 1 };
+   *
+   * // using `value` option with a function:
+   * var parser = new Talkine.parser({ properties: {
+   *   count: {
+   *     value: function (obj, property, val) {
+   *        return window.myCount++;
+   *     }
+   *   }
+   * }});
+   * parser.parse({});
+   * //=> { count: 1 };
+   * parser.parse({});
+   * // => { count: 2 };
+   *
+   *
+   * // using `type` option:
+   *
+   * // `boolean` type
+   * var parser = new Talkine.parser({ properties: {
+   *   myProperty: { type: 'boolean' }
+   * }});
+   * parser.parse({});
+   * // => { myProperty: false };
+   *
+   * // `date` type
+   * // NOTE: When the type is `date`, the value returned is a `Date` object
+   * var parser = new Talkine.parser({ properties: {
+   *   myProperty: { type: 'date' }
+   * }});
+   * parser.parse({});
+   * // => { myProperty: 'Sun Dec 08 2013 08:06:38 GMT-0800 (PST)' };
+   *
+   * // `number` type
+   * var parser = new Talkine.parser({ properties: {
+   *   myProperty: { type: 'number' }
+   * }});
+   * parser.parse({});
+   * // => { myProperty: 0 };
+   *
+   */
+  function setDefault(obj, property, val) {
+    if (val) {
+      return val;
+    }
+
+    if (property.value) {
+      if (isFunction(property.value)) {
+        return property.value(obj, property, val);
+      }
+      return property.value;
+    }
+
+    if (property.type) {
+      switch(property.type) {
+      case 'boolean':
+        return false;
+      case 'date':
+        return new Date();
+      case 'number':
+        return 0;
+      }
+    }
+
+    return null;
   }
 
   /**
