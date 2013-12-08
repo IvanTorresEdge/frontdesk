@@ -11,6 +11,10 @@
 
   // Utility functions
 
+  function contains(obj, value) {
+    return (obj.indexOf('>') != -1);
+  }
+
   /**
    * Gets the first property name of an object.
    *
@@ -151,6 +155,8 @@
   function parseObject(config, obj) {
     var result = null;
 
+    obj = parseRoot(config, obj);
+
     if (isFunction(config.beforeParse)) {
       obj = config.beforeParse(config, obj);
     }
@@ -168,7 +174,101 @@
       result = config.afterParse(config, result);
     }
 
+    result = prependRoot(config, result);
+
     return result;
+  }
+
+  /**
+   * Removes root element before parsing.
+   *
+   * @private
+   * @name parseRoot
+   * @param {Object} config property configuration.
+   * @param {Object} obj the object to be parsed.
+   * @return {Object} object to be parsed without root element.
+   */
+  function parseRoot(config, obj) {
+    var matches, re = /^([^>]+)>/;
+
+    if (config.root) {
+      if (!contains(config.root, '>')) {
+        return parseNestedRoot(obj, config.root);
+      } else if ((matches = re.exec(config.root))) {
+        return parseNestedRoot(obj, matches[1]);
+      }
+    }
+
+    return obj;
+  }
+
+  /**
+   * Walks nested root property.
+   *
+   * @private
+   * @name parseNestedRoot
+   * @param {Object} obj object to be parsed.
+   * @param {String} root root property path.
+   */
+  function parseNestedRoot(obj, root) {
+    var path = root.split('.'),
+        len  = path.length,
+        ctx  = obj;
+
+    for (var i = 0; i < len; i++) {
+      ctx = ctx[path[i]] || null;
+      if (!ctx) { break; }
+    }
+
+    return ctx;
+  }
+
+  /**
+   * Appends root element after parsing.
+   *
+   * @private
+   * @name preprendRoot
+   * @param {Object} config property configuration.
+   * @param {Object} obj parsed object.
+   */
+  function prependRoot(config, obj) {
+    var matches,
+        rooted = {},
+        re = />(.+)$/;
+
+    if (config.root) {
+      if (!contains(config.root, '>')) {
+        prependNestedRoot(rooted, config.root, obj);
+        return rooted;
+      } else if ((matches = re.exec(config.root))) {
+        prependNestedRoot(rooted, matches[1], obj);
+        return rooted;
+      }
+    }
+
+    return obj;
+  }
+
+  /**
+   * Builds nested root property.
+   *
+   * @private
+   * @name prependNestedRoot
+   * @param {Object} root root object.
+   * @param {Object} root root property name.
+   * @param {*} value parsed object.
+   */
+  function prependNestedRoot(root, property, value) {
+    var path = property.split('.'),
+        len  = path.length - 1,
+        ctx  = root;
+
+    for (var i = 0; i < len; i++) {
+      if (!ctx[path[i]]) { ctx[path[i]] = {}; }
+      ctx = ctx[path[i]];
+    }
+
+    ctx[path[len]] = value;
   }
 
   /**
@@ -205,9 +305,10 @@
    */
   function getValue(obj, property) {
     var path = property.name.split('.'),
+        len  = path.length,
         ctx  = obj;
 
-    for (var i = 0, len = path.length; i < len; i++) {
+    for (var i = 0; i < len; i++) {
       ctx = ctx[path[i]] || null;
       if (!ctx) { break; }
     }
@@ -246,15 +347,15 @@
    */
   function setValue(obj, property, value) {
     var path = property.alias.split('.'),
-        len  = path.length,
+        len  = path.length - 1,
         ctx  = obj;
 
-    for (var i = 0; i < len - 1; i++) {
+    for (var i = 0; i < len; i++) {
       if (!ctx[path[i]]) { ctx[path[i]] = {}; }
       ctx = ctx[path[i]];
     }
 
-    ctx[path[len - 1]] = value;
+    ctx[path[len]] = value;
   }
 
   /**

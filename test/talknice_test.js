@@ -4,6 +4,58 @@ describe('Talknice', function() {
 
   describe('#parse', function () {
 
+    describe('root element', function () {
+      it('parses', function () {
+        var parser = Talknice.parser({ root: 'user', properties: ['id'] }),
+            data   = { user: { id: 1 } };
+        assert.deepEqual(parser.parse(data), { user: { id: 1 } });
+      });
+
+      it('removes', function () {
+        var parser = Talknice.parser({ root: 'user>', properties: ['id'] }),
+            data   = { user: { id: 1 } };
+        assert.deepEqual(parser.parse(data), { id: 1 });
+      });
+
+      it('prepends', function () {
+        var parser = Talknice.parser({ root: '>user', properties: ['id'] }),
+            data   = { id: 1 };
+        assert.deepEqual(parser.parse(data), { user: { id: 1 } });
+      });
+
+      it('aliases', function () {
+        var parser = Talknice.parser({ root: 'user>person', properties: ['id'] }),
+            data   = { user: { id: 1 } };
+        assert.deepEqual(parser.parse(data), { person: { id: 1 } });
+      });
+
+      describe('nested root element', function () {
+        it('parses', function () {
+          var parser = Talknice.parser({ root: 'user.attributes', properties: ['id'] }),
+              data   = { user: { attributes : { id: 1 } } };
+          assert.deepEqual(parser.parse(data), { user: { attributes: { id: 1 } } });
+        });
+
+        it('removes', function () {
+          var parser = Talknice.parser({ root: 'user.attributes>', properties: ['id'] }),
+              data   = { user: { attributes : { id: 1 } } };
+          assert.deepEqual(parser.parse(data), { id: 1 });
+        });
+
+        it('prepends', function () {
+          var parser = Talknice.parser({ root: '>user.attributes', properties: ['id'] }),
+              data   = { id: 1 };
+          assert.deepEqual(parser.parse(data), { user: { attributes: { id: 1 } } });
+        });
+
+        it('aliases', function () {
+          var parser = Talknice.parser({ root: 'user.attributes>user.attrs', properties: ['id'] }),
+              data   = { user: { attributes: { id: 1 } } };
+          assert.deepEqual(parser.parse(data), { user: { attrs: { id: 1 } } });
+        });
+      });
+    });
+
     describe('filtering of properties', function () {
       it('1st form', function () {
         var parser = Talknice.parser({ properties: ['id'] }),
