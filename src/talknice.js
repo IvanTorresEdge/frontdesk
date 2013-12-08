@@ -3,11 +3,11 @@
  * Copyright 2013 Ivan Torres
  * Released under the MIT license.
  */
-(function () {
+;(function () {
 
   'use strict';
 
-  var root = this;
+  var root = this, Talknice;
 
   // Utility functions
 
@@ -123,9 +123,17 @@
   function parseElement(config, obj) {
     var result = {};
 
+    if (isFunction(config.beforeParseElement)) {
+      obj = config.beforeParseElement(config, obj);
+    }
+
     for (var i = config.properties.length - 1; i >= 0; i--) {
       var property = config.properties[i];
       setValue(result, property, getValue(obj, property));
+    }
+
+    if (isFunction(config.afterParseElement)) {
+      result = config.afterParseElement(config, result);
     }
 
     return result;
@@ -143,6 +151,10 @@
   function parseObject(config, obj) {
     var result = null;
 
+    if (isFunction(config.beforeParse)) {
+      obj = config.beforeParse(config, obj);
+    }
+
     if (isArray(obj)) {
       result = [];
       for (var i = 0, len = obj.length; i < len; i++) {
@@ -150,6 +162,10 @@
       }
     } else {
       result = parseElement(config, obj);
+    }
+
+    if (isFunction(config.afterParse)) {
+      result = config.afterParse(config, result);
     }
 
     return result;
@@ -333,8 +349,9 @@
   }
 
   /**
-   * @name Parser
+   * @private
    * @constructor
+   * @name Parser
    */
   function Parser(config) {
     this.config = config || {};
@@ -367,7 +384,7 @@
   /**
    * @module Talknice
    */
-  var Talknice = {
+  Talknice = {
     parser: function parser(config) {
       return (new Parser(config));
     }

@@ -72,6 +72,69 @@ describe('Talknice', function() {
       });
     });
 
+    describe('callbacks', function () {
+      it('calls #beforeParse if present', function () {
+        var data, parser;
+
+        data = {};
+
+        parser = Talknice.parser({
+          properties: [{ id: 'number' }],
+          beforeParse: function (config, obj) {
+            return [{ id: 1 }, { id: 2 }];
+          }
+        });
+
+        assert.deepEqual(parser.parse(data), [{ number: 1 }, { number: 2 }]);
+      });
+
+      it('calls #afterParse if present', function () {
+        var data, parser;
+
+        data = [{ id: 1 }, { id: 2 }];
+
+        parser = Talknice.parser({
+          properties: [{ id: 'number' }],
+          afterParse: function (config, obj) {
+            obj.push({ count: 2 });
+            return obj;
+          }
+        });
+
+        assert.deepEqual(parser.parse(data), [{ number: 1 }, { number: 2 }, { count: 2 }]);
+      });
+
+      it('calls #beforeParseElement if present', function () {
+        var data, parser;
+
+        data = [{ id: 1 }, { id: 2 }];
+
+        parser = Talknice.parser({
+          properties: ['number'],
+          beforeParseElement: function (config, obj) {
+            return { number: obj.id };
+          }
+        });
+
+        assert.deepEqual(parser.parse(data), [{ number: 1 }, { number: 2 }]);
+      });
+
+      it('calls #afterParseElement if present', function () {
+        var data, parser;
+
+        data = [{ id: 1 }, { id: 2 }];
+
+        parser = Talknice.parser({
+          properties: ['id'],
+          afterParseElement: function (config, obj) {
+            return { number: obj.id };
+          }
+        });
+
+        assert.deepEqual(parser.parse(data), [{ number: 1 }, { number: 2 }]);
+      });
+    });
+
     it('process arrays', function () {
       var parser = Talknice.parser({ properties: ['id'] }),
           data   = [{ id: 1, name: 'Name 1' }, { id: 2, name: 'Name 2' }];
