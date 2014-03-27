@@ -1,5 +1,5 @@
 /*!
- * Talknice 0.1.0 <http://github.com/mexpolk/talknice>
+ * Frontdesk 0.1.0 <http://github.com/mexpolk/frontdesk>
  * Copyright 2013 Ivan Torres
  * Released under the MIT license.
  */
@@ -7,7 +7,7 @@
 
   'use strict';
 
-  var root = this, Talknice;
+  var root = this, Frontdesk;
 
   // Utility functions
 
@@ -566,9 +566,9 @@
   };
 
   /**
-   * @module Talknice
+   * @module Frontdesk
    */
-  Talknice = {
+  Frontdesk = {
     parser: function parser(config) {
       return (new Parser(config));
     }
@@ -576,12 +576,12 @@
 
   if (typeof define == 'function' && define.amd) {
     define(function () {
-      return Talknice;
+      return Frontdesk;
     });
   } else if (typeof module == 'object' && module.exports) {
-    module.exports = Talknice;
+    module.exports = Frontdesk;
   } else {
-    root.Talknice = Talknice;
+    root.Frontdesk = Frontdesk;
   }
 
 }).call(this);

@@ -1,23 +1,23 @@
 {
-  "name": "talk-nice",
-  "version": "0.0.0",
-  "description": "Makes any API talk to you nice",
-  "main": "dist/talk-nice.js",
+  "name": "frontdesk",
+  "version": "0.1.0",
+  "description": "Stay in control of your JS application's state",
+  "main": "dist/frontdesk.js",
   "keywords": [
     "api",
     "rest"
   ],
   "scripts": {
-    "test": "mocha ./talk-nice.js"
+    "test": "mocha ./frontdesk.js"
   },
   "repository": {
-    "url": "https://github.com/mexpolk/talk-nice.git",
+    "url": "https://github.com/mexpolk/frontdesk.git",
     "type": "git"
   },
   "author": "Ivan Torres <mexpolk@gmail.com> (http://rethinkcode.com)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mexpolk/talk-nice/issues"
+    "url": "https://github.com/mexpolk/frontdesk/issues"
   },
   "dependencies": {},
   "devDependencies": {
