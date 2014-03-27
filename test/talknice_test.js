@@ -191,6 +191,17 @@ describe('Talknice', function() {
       assert.deepEqual(parser.parse(data), [{ id: 1 }, { id: 2 }]);
     });
 
+    it('process nested parser', function () {
+      var nestedParser = Talknice.parser({ properties: ['myNestedProperty']}),
+          parser = Talknice.parser({properties: [
+            {myProperty: nestedParser}
+          ]});
+      assert.deepEqual(
+        parser.parse({myProperty: {myNestedProperty: 'myValue'}}),
+        {myProperty: {myNestedProperty: 'myValue'} }
+      );
+    });
+
     describe('properties options', function () {
       describe('`value` option', function () {
         it('does nothing when value is present', function () {
