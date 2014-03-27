@@ -12,7 +12,7 @@
   // Utility functions
 
   function contains(obj, value) {
-    return (obj.indexOf('>') != -1);
+    return (obj.indexOf(value) !== -1);
   }
 
   /**
